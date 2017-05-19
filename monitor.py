@@ -173,3 +173,6 @@ class PlacestartMonitor:
             except Exception as e:
                 logging.warn("Something went wrong, restarting bot Cause: %s." % e)
                 self.cleanup()
+
+if __name__ == "__main__":
+    fire.Fire(PlacestartMonitor)
