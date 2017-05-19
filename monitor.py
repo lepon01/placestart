@@ -6,8 +6,6 @@ import time
 import urllib.request
 import json
 
-import fire
-
 from colors import colormap, mapcolor, codemap, mapcode, pallete
 
 
@@ -49,7 +47,7 @@ class PlacestartMonitor:
         return
 
     def get_board(self):
-        board_url = 'https://www.reddit.com/api/place/board-bitmap'
+        board_url = 'http://reddit.moustacheminer.com/api/place/board-bitmap'
         board_bytes = iter(urllib.request.urlopen(board_url).read())
         board_image = PIL.Image.new('P', (1000,1000))
         board_image.putpalette(pallete)
@@ -98,10 +96,10 @@ class PlacestartMonitor:
         ))
 
         session = requests.Session()
-        session.mount('https://www.reddit.com', requests.adapters.HTTPAdapter(max_retries=5))
+        session.mount('http://reddit.moustacheminer.com', requests.adapters.HTTPAdapter(max_retries=5))
         session.headers["User-Agent"] = "PlacePlacer"
         auth_request = session.post(
-            "https://www.reddit.com/api/login/{}".format(self._username),
+            "http://reddit.moustacheminer.com/api/login/{}".format(self._username),
             data={"user": self._username, "passwd": self._password, "api_type": "json"}
         )
         try:
@@ -113,7 +111,7 @@ class PlacestartMonitor:
         # Is the target still wrong?
         while True:
             probe_request = session.get(
-                "http://reddit.com/api/place/pixel.json?x={}&y={}".format(x, y),
+                "http://reddit.moustacheminer.com/api/place/pixel.json?x={}&y={}".format(x, y),
                 timeout=5
             )
             if probe_request.status_code == 200:
@@ -131,7 +129,7 @@ class PlacestartMonitor:
 
         # Draw it!
         draw_request = session.post(
-            "https://www.reddit.com/api/place/draw.json",
+            "http://reddit.moustacheminer.com/api/place/draw.json",
             data={"x": str(x), "y": str(y), "color": str(mapcode[new_color])}
         )
         logging.debug("Draw response: %s" % draw_request.json())
@@ -175,8 +173,3 @@ class PlacestartMonitor:
             except Exception as e:
                 logging.warn("Something went wrong, restarting bot Cause: %s." % e)
                 self.cleanup()
-
-
-
-if __name__ == "__main__":
-    fire.Fire(PlacestartMonitor)
