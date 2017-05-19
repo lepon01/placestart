@@ -5,6 +5,7 @@ import requests.adapters
 import time
 import urllib.request
 import json
+import fire
 
 from colors import colormap, mapcolor, codemap, mapcode, pallete
 
